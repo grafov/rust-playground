@@ -128,7 +128,7 @@ By default confirmation required."
 (defun rust-playground-rm ()  
   "Remove files of the current snippet together with directory of this snippet."
   (interactive)
-  (if (string-match-p (file-truename rust-playground-basedir) (file-truename (buffer-file-name)))
+  (if (rust-playground-inside)
       (if (or (not rust-playground-confirm-deletion)
 	       (y-or-n-p (format "Do you want delete whole snippet dir %s? "
 				 (file-name-directory (buffer-file-name)))))
@@ -162,7 +162,7 @@ By default confirmation required."
 ;;         (switch-to-buffer buffer)))))
 
 ;; (defun rust-playground-upload ()
-;;   "Upload the current buffer to play.golang.org and return the short URL of the playground."
+;;   "Upload the current buffer to play.rust-lang.org and return the short URL of the playground."
 ;;   (interactive)
 ;;   (goto-char (point-min))
 ;;   (forward-line)
@@ -175,6 +175,11 @@ By default confirmation required."
                           (time-stamp-string "at-%:y-%02m-%02d-%02H%02M%02S"))))
     (make-directory dir-name t)
     dir-name))
+
+(defun rust-playground-inside ()
+  "It checks that minor mode is rusl-playground and buffer file placed under default directory."
+  (and (boundp 'rust-playground-mode) rust-playground-mode
+   (if (string-match-p (file-truename rust-playground-basedir) (file-truename (buffer-file-name))) t)))
 
 (provide 'rust-playground)
 ;;; rust-playground.el ends here
