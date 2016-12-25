@@ -178,8 +178,8 @@ By default confirmation required."
 
 (defun rust-playground-inside ()
   "It checks that minor mode is rusl-playground and buffer file placed under default directory."
-  (and (boundp 'rust-playground-mode) rust-playground-mode
-   (if (string-match-p (file-truename rust-playground-basedir) (file-truename (buffer-file-name))) t)))
+  (if (string-match-p (file-truename rust-playground-basedir) (file-truename (buffer-file-name)))
+	  (bound-and-true-p rust-playground-mode)))
 
 (provide 'rust-playground)
 ;;; rust-playground.el ends here
