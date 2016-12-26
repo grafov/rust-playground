@@ -5,7 +5,7 @@
 ;; Author: Alexander I.Grafov <grafov@gmail.com>
 ;; URL: https://github.com/grafov/rust-playground
 ;; Keywords: tools, rust
-;; Package-Requires: ((emacs "24") (rust-mode "0.3.0"))
+;; Package-Requires: ((emacs "24.3") (rust-mode "0.3.0"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@
 (require 'time-stamp)
 
 ; I think it should be defined in rust-mode.
-(defcustom rust-bin "rustc"
+(defcustom rust-playground-bin "rustc"
   "The ’rust’ command."
   :type 'string
   :group 'rust-mode)
@@ -89,7 +89,7 @@ By default confirmation required."
   (make-local-variable 'compile-command)
   (let ((snippet-file buffer-file-name))
 	(save-buffer t)	
-	(compile (concat rust-bin " " snippet-file " -o snippet && " (file-name-directory snippet-file) "snippet"))))
+	(compile (concat rust-playground-bin " " snippet-file " -o snippet && " (file-name-directory snippet-file) "snippet"))))
 
 ;;;###autoload
 (defun rust-playground ()
