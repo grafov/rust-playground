@@ -16,6 +16,10 @@ The mirror repository of the project: https://notabug.org/grafov/rust-playground
 I really not think that this small project need the mirror but I just would like advertise a nice
 git hosting for FOSS. Try [notabug.org](https://notabug.org) for your projects! :)
 
+Example screen after creation of a new snippet:
+
+![screenshot](rust-playground-after-start.png)
+
 ## Usage
 
 ### Quick start
