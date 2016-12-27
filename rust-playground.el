@@ -4,6 +4,7 @@
 
 ;; Author: Alexander I.Grafov <grafov@gmail.com>
 ;; URL: https://github.com/grafov/rust-playground
+;; Version: 0.1
 ;; Keywords: tools, rust
 ;; Package-Requires: ((emacs "24.3") (rust-mode "0.3.0"))
 
