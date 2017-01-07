@@ -90,7 +90,8 @@ By default confirmation required."
   (make-local-variable 'compile-command)
   (let ((snippet-file buffer-file-name))
 	(save-buffer t)	
-	(compile (concat rust-playground-bin " " snippet-file " -o snippet && " (file-name-directory snippet-file) "snippet"))))
+	(compile (concat rust-playground-bin " " (shell-quote-argument snippet-file) " -o snippet && "
+			 (file-name-directory snippet-file) "snippet"))))
 
 ;;;###autoload
 (defun rust-playground ()
