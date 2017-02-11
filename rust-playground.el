@@ -1,6 +1,6 @@
 ;;; rust-playground.el --- Local Rust playground for short code snippets.
 
-;; Copyright (C) 2016  Alexander I.Grafov (axel)
+;; Copyright (C) 2016-2017  Alexander I.Grafov (axel)
 
 ;; Author: Alexander I.Grafov <grafov@gmail.com>
 ;; URL: https://github.com/grafov/rust-playground
@@ -67,6 +67,7 @@ By default confirmation required."
 
 (defcustom rust-playground-basedir (locate-user-emacs-file "rust-playground")
   "Base directory for playground snippets."
+  :type 'file
   :group 'rust-playground)
 
 (defvar-local rust-playground-current-snippet-file "snippet.rs"
