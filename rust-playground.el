@@ -80,10 +80,12 @@ By default confirmation required."
   :keymap '(([C-return] . rust-playground-exec)))
 
 (defun rust-playground-snippet-file-name(&optional snippet-name)
-  (setq-local rust-playground-current-snippet-file (let ((file-name (cond (snippet-name)
-                                                                          (rust-playground-ask-file-name
-                                                                           (read-string "Rust Playground filename: ")) ("snippet"))))
-                                                     (concat (rust-playground-snippet-unique-dir file-name) "/" file-name ".rs"))))
+  (setq-local rust-playground-current-snippet-file
+              (let ((file-name
+                     (cond (snippet-name)
+                           (rust-playground-ask-file-name
+                            (read-string "Rust Playground filename: ")) ("snippet"))))
+                (concat (rust-playground-snippet-unique-dir file-name) "/" file-name ".rs"))))
 
 (defun rust-playground-exec ()
   "Save the buffer then run Rust compiler for executing the code."
