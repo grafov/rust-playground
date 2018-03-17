@@ -80,19 +80,20 @@ By default confirmation required."
   :keymap '(([C-return] . rust-playground-exec)))
 
 (defun rust-playground-snippet-file-name(&optional snippet-name)
- (setq-local rust-playground-current-snippet-file (let ((file-name (cond (snippet-name)
-                         (rust-playground-ask-file-name
-                           (read-string "Rust Playground filename: ")) ("snippet"))))
-    (concat (rust-playground-snippet-unique-dir file-name) "/" file-name ".rs"))))
+  (setq-local rust-playground-current-snippet-file
+              (let ((file-name
+                     (cond (snippet-name)
+                           (rust-playground-ask-file-name
+                            (read-string "Rust Playground filename: ")) ("snippet"))))
+                (concat (rust-playground-snippet-unique-dir file-name) "/" file-name ".rs"))))
 
 (defun rust-playground-exec ()
-  "Save the buffer then runs Rust compiler for executing the code."
+  "Save the buffer then run Rust compiler for executing the code."
   (interactive)
   (make-local-variable 'compile-command)
   (let ((snippet-file buffer-file-name))
-	(save-buffer t)	
-	(compile (concat rust-playground-bin " " (shell-quote-argument snippet-file) " -o snippet && "
-			 (file-name-directory snippet-file) "snippet"))))
+    (save-buffer t)
+    (compile "cargo build")))
 
 ;;;###autoload
 (defun rust-playground ()
@@ -101,21 +102,21 @@ By default confirmation required."
   (let ((snippet-file-name (rust-playground-snippet-file-name)))
     (switch-to-buffer (create-file-buffer snippet-file-name))
     (add-hook 'kill-buffer-hook 'rust-playground-on-buffer-kill nil t)
-	(rust-playground-insert-template-head "snippet of code")
-(insert "fn main() {
+    (rust-playground-insert-template-head "snippet of code")
+    (insert "fn main() {
 
     println!(\"Results:\")
 
 }")
-(backward-char 3)
-(rust-mode)
-(rust-playground-mode)
-(set-visited-file-name snippet-file-name t)))
+    (backward-char 3)
+    (rust-mode)
+    (rust-playground-mode)
+    (set-visited-file-name snippet-file-name t)))
 
-; remove compiled binary from snippet dir but not touch source files
+; remove compiled binary from snippet dir but not touch source files ;
 (defun rust-playground-on-buffer-kill ()
   (if (string-match-p (file-truename rust-playground-basedir) (file-truename (buffer-file-name)))
-	  (delete-file (concat (file-name-directory (buffer-file-name)) "snippet"))))
+      (delete-file (concat (file-name-directory (buffer-file-name)) "snippet"))))
 
 (defun rust-playground-insert-template-head (description)
   (insert "// -*- mode:rust;mode:rust-playground -*-
@@ -128,20 +129,20 @@ By default confirmation required."
 "))
 
 ;;;###autoload
-(defun rust-playground-rm ()  
+(defun rust-playground-rm ()
   "Remove files of the current snippet together with directory of this snippet."
   (interactive)
   (if (rust-playground-inside)
       (if (or (not rust-playground-confirm-deletion)
-	       (y-or-n-p (format "Do you want delete whole snippet dir %s? "
-				 (file-name-directory (buffer-file-name)))))
-		  (progn
-			(save-buffer)
-			(delete-directory (file-name-directory (buffer-file-name)) t t)
-			(remove-hook 'kill-buffer-hook 'rust-playground-on-buffer-kill t)
-			(kill-buffer)))
-	(message "Won't delete this! Because %s is not under the path %s. Remove the snippet manually!"
-			 (buffer-file-name) rust-playground-basedir)))
+              (y-or-n-p (format "Do you want delete whole snippet dir %s? "
+                                (file-name-directory (buffer-file-name)))))
+          (progn
+            (save-buffer)
+            (delete-directory (file-name-directory (buffer-file-name)) t t)
+            (remove-hook 'kill-buffer-hook 'rust-playground-on-buffer-kill t)
+            (kill-buffer)))
+    (message "Won't delete this! Because %s is not under the path %s. Remove the snippet manually!"
+             (buffer-file-name) rust-playground-basedir)))
 
 ;; ;;;###autoload
 ;; (defun rust-playground-download (url)
@@ -157,11 +158,11 @@ By default confirmation required."
 ;;       (copy-to-buffer buffer (point) (point-max))
 ;;       (kill-buffer)
 ;;       (with-current-buffer buffer
-;; 		(goto-char (point-min))
-;; 		(rust-playground-insert-template-head (concat url " imported"))
-;; 		(rust-mode)
-;; 		(rust-playground-mode)
-;; 		(set-visited-file-name snippet-file-name t)
+;;              (goto-char (point-min))
+;;              (rust-playground-insert-template-head (concat url " imported"))
+;;              (rust-mode)
+;;              (rust-playground-mode)
+;;              (set-visited-file-name snippet-file-name t)
 ;;         (switch-to-buffer buffer)))))
 
 ;; (defun rust-playground-upload ()
@@ -182,7 +183,7 @@ By default confirmation required."
 (defun rust-playground-inside ()
   "It checks that minor mode is rusl-playground and buffer file placed under default directory."
   (if (string-match-p (file-truename rust-playground-basedir) (file-truename (buffer-file-name)))
-	  (bound-and-true-p rust-playground-mode)))
+      (bound-and-true-p rust-playground-mode)))
 
 (provide 'rust-playground)
 ;;; rust-playground.el ends here
