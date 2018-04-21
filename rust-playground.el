@@ -181,7 +181,7 @@ authors = [\"Rust Example <rust-snippet@example.com>\"]
                                   (file-name-directory (buffer-file-name)))))
             (progn
               (save-buffer)
-              (message "Would have deleted %s." playground-basedir)
+              ;; (message "Would have deleted %s." playground-basedir)
               (delete-directory (file-name-directory (buffer-file-name)) t t)
               ;; (remove-hook 'kill-buffer-hook 'rust-playground-on-buffer-kill t)
               ;; FIXME need to kill the cargo.toml buffer too
