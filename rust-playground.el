@@ -101,12 +101,13 @@ By default confirmation required."
 
 (defun rp-snippet-main-file-name (basedir)
   "Get the snippet main.rs file from BASEDIR."
+  ;; FIXME use proper directory functions
   (concat basedir "src/main.rs"))
 
 (defun rp-toml-file-name (basedir)
   "Get the cargo.toml filename from BASEDIR."
+  ;; FIXME use proper directory functions
   (concat basedir "Cargo.toml"))
-    
 
 (defun rust-playground-exec ()
   "Save the buffer then run Rust compiler for executing the code."
@@ -152,22 +153,6 @@ authors = [\"Rust Example <rust-snippet@example.com>\"]
     (rust-mode)
     (rust-playground-mode)
     (set-visited-file-name snippet-file-name t)))
-
-; remove compiled binary from snippet dir but not touch source files ;
-(defun rust-playground-on-buffer-kill ()
-;;   (if (string-match-p (file-truename rust-playground-basedir) (file-truename (buffer-file-name)))
-;;       (delete-file (concat (file-name-directory (buffer-file-name)) "snippet"))))
-
-;; (defun rust-playground-insert-template-head (description)
-;;   (insert "// -*- mode:rust;mode:rust-playground -*-
-;; // " description " @ " (time-stamp-string "%:y-%02m-%02d %02H:%02M:%02S") "
-
-;; // === Rust Playground ===
-;; // Execute the snippet with Ctl-Return
-;; // Remove the snippet completely with its dir and all files M-x `rust-playground-rm`
-
-  ;; "))
-  nil)
 
 ;;;###autoload
 (defun rust-playground-rm ()
@@ -226,8 +211,6 @@ authors = [\"Rust Example <rust-snippet@example.com>\"]
     (make-directory (concat dir-name "/src"))
     dir-name))
 
-
-;; PATH should be the current path, not an arg
 (defun rust-playground-get-snippet-basedir (&optional path)
   "Get the path of the dir containing this snippet, starting from PATH, or NIL of this is not a snippet."
   (if (not path)
@@ -247,17 +230,6 @@ authors = [\"Rust Example <rust-snippet@example.com>\"]
               path)
           (rust-playground-get-snippet-basedir path-parent)))
     nil))
-
-(defun rust-playground-inside ()
-  "Check that minor mode is rust-playground and buffer file placed under default directory."
-  (not (eq nil (string-match-p (file-truename rust-playground-basedir) (file-truename (buffer-file-name))))))
-
-;; The mode isnt really gonna matter, and we're adding a Cargo.toml, which this function returns nil for.
-
-;; (defun rust-playground-inside ()
-;;   "It checks that minor mode is rust-playground and buffer file placed under default directory."
-;;   (if (string-match-p (file-truename rust-playground-basedir) (file-truename (buffer-file-name)))
-;;       (bound-and-true-p rust-playground-mode)))
 
 (provide 'rust-playground)
 ;;; rust-playground.el ends here
