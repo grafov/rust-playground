@@ -121,7 +121,7 @@ authors = [\"Rust Example <rust-snippet@example.com>\"]
 (defmacro in-rust-playground (&rest forms)
   "Execute FORMS if current buffer is part of a rust playground.
 Otherwise message the user that they aren't in one."
-  `(if (not (rust-playground-get-snippet-basedir))
+  `(unless (rust-playground-get-snippet-basedir)
        (message "You aren't in a Rust playground.")
      ,@forms))
 
@@ -235,11 +235,11 @@ Otherwise message the user that they aren't in one."
 (defun rust-playground-get-snippet-basedir (&optional path)
   "Get the path of the dir containing this snippet.
 Start from PATH or the path of the current buffer's file, or NIL of this is not a snippet."
-  (if (not path)
+  (unless path
       (setq path (buffer-file-name)))
-  (if (not path)
+  (unless path
       nil
-    (if (not (string= path "/"))
+    (unless (string= path "/")
         (let ((base "/home/jason/.emacs.d/rust-playground")
               (path-parent (file-name-directory (directory-file-name path))))
           (if (string= (file-name-as-directory base)
