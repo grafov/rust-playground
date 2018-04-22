@@ -143,17 +143,17 @@ Otherwise message the user that they aren't in one."
     ;; create a buffer for Cargo.toml and switch to it
     (make-directory snippet-dir)
     (set-buffer (create-file-buffer snippet-cargo-toml))
-    (insert rust-playground-cargo-toml-template)
     (set-visited-file-name snippet-cargo-toml t)
-    (save-buffer)
+    (insert rust-playground-cargo-toml-template)
+    (save-buffer)    
     (make-directory (concat snippet-dir "src"))
     (switch-to-buffer (create-file-buffer snippet-file-name))
-    (rust-playground-insert-template-head "snippet of code")
+    (set-visited-file-name snippet-file-name t)
+    (rust-playground-insert-template-head "snippet of code" snippet-dir)
     (insert rust-playground-main-rs-template)
     (backward-char 27)
     (rust-mode)
-    (rust-playground-mode)
-    (set-visited-file-name snippet-file-name t)))
+    (rust-playground-mode)))
 
 (defun rust-playground-switch-between-cargo-and-main ()
   "Change buffers between the main.rs and Cargo.toml files for the current snippet."
@@ -171,14 +171,20 @@ Otherwise message the user that they aren't in one."
                           (file-name-as-directory "src")
                           "main.rs")))))))
 
-(defun rust-playground-insert-template-head (description)
-  (insert "// -*- mode:rust;mode:rust-playground -*-
+(defun rust-playground-insert-template-head (description basedir)
+  (insert
+"// -*- mode:rust;mode:rust-playground -*-
 // " description " @ " (time-stamp-string "%:y-%02m-%02d %02H:%02M:%02S")
-
 "
+
 // === Rust Playground ===
-// Execute the snippet with C-c C-c
-// Remove the snippet completely with its dir and all files M-x `rust-playground-rm`
+// This snippet is in: " basedir
+"
+
+// Execute the snippet: C-c C-c
+// Delete the snippet completely: C-c k
+// Toggle between main.rs and Cargo.toml: C-c b
+
 "))
 
 ;;;###autoload
