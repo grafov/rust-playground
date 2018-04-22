@@ -41,22 +41,22 @@
 (require 'compile)
 (require 'time-stamp)
 
-; I think it should be defined in rust-mode.
-(defcustom rust-playground-bin "rustc"
-  "The ’rust’ command."
-  :type 'string
-  :group 'rust-mode)
-
 (defgroup rust-playground nil
   "Options specific to Rust Playground."
   :group 'rust-mode)
 
-(defcustom rust-playground-ask-file-name nil
-  "Non-nil means we ask for a name for the snippet.
-
-By default it will be created as snippet.go"
-  :type 'boolean
+;; I think it should be defined in rust-mode.
+(defcustom rust-playground-run-command "cargo run"
+  "The ’rust’ command."
+  :type 'string
   :group 'rust-playground)
+
+;; (defcustom rust-playground-ask-file-name nil
+;;   "Non-nil means we ask for a name for the snippet.
+
+;; By default it will be created as snippet.go"
+;;   :type 'boolean
+;;   :group 'rust-playground)
 
 (defcustom rust-playground-confirm-deletion t
   "Non-nil means you will be asked for confirmation on the snippet deletion with `rust-playground-rm'.
@@ -86,15 +86,22 @@ authors = [\"Rust Example <rust-snippet@example.com>\"]
 }"
   "When creating a new playground, this will be used as the body of the main.rs file")
 
-(defvar-local rust-playground-current-snippet-file "snippet.rs"
-  "The current snippet file.")
+;; (defvar-local rust-playground-current-snippet-file "snippet.rs"
+;;   "The current snippet file.")
 
 (define-minor-mode rust-playground-mode
   "A place for playing with Rust code and export it in short snippets."
   :init-value nil
   :lighter "Play(Rust)"
-  :keymap '(([C-return] . rust-playground-exec)))
-
+  :keymap (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "C-c C-c") 'rust-playground-exec)
+    (define-key map (kbd "C-c b") 'rust-playground-switch-between-cargo-and-main)
+    (define-key map (kbd "C-c k") 'rust-playground-rm)
+    map))
+  
+;; (defvar rust-playground-mode-map
+;;   "Keymap for the Rust playground")
+  
 (defun rust-playground-dir-name (&optional snippet-name)
   "Get the name of the directory where the snippet will exist, with SNIPPET-NAME as part of the directory name."
   (file-name-as-directory (concat (file-name-as-directory rust-playground-basedir)
@@ -108,6 +115,9 @@ authors = [\"Rust Example <rust-snippet@example.com>\"]
   "Get the cargo.toml filename from BASEDIR."
   (concat basedir "Cargo.toml"))
 
+;; I think the proper way to check for this is to test if the minor mode is active
+;; TODO base this check off the minor mode, once that mode gets set on all files
+;; in a playground
 (defmacro in-rust-playground (&rest forms)
   "Execute FORMS if current buffer is part of a rust playground.
 Otherwise message the user that they aren't in one."
@@ -160,6 +170,16 @@ Otherwise message the user that they aren't in one."
        (find-file (concat basedir
                           (file-name-as-directory "src")
                           "main.rs")))))))
+
+(defun rust-playground-insert-template-head (description)
+  (insert "// -*- mode:rust;mode:rust-playground -*-
+// " description " @ " (time-stamp-string "%:y-%02m-%02d %02H:%02M:%02S")
+
+"
+// === Rust Playground ===
+// Execute the snippet with C-c C-c
+// Remove the snippet completely with its dir and all files M-x `rust-playground-rm`
+"))
 
 ;;;###autoload
 (defun rust-playground-rm ()
