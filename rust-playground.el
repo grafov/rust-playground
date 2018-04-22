@@ -33,8 +33,6 @@
 
 ;; You may push code to play.rust-lang.org with rust-mode' function `rust-playpen-buffer`.
 
-;;
-
 ;;; Code:
 
 (require 'rust-mode)
@@ -50,13 +48,6 @@
   "The ’rust’ command."
   :type 'string
   :group 'rust-playground)
-
-;; (defcustom rust-playground-ask-file-name nil
-;;   "Non-nil means we ask for a name for the snippet.
-
-;; By default it will be created as snippet.go"
-;;   :type 'boolean
-;;   :group 'rust-playground)
 
 (defcustom rust-playground-confirm-deletion t
   "Non-nil means you will be asked for confirmation on the snippet deletion with `rust-playground-rm'.
@@ -98,9 +89,6 @@ authors = [\"Rust Example <rust-snippet@example.com>\"]
     (define-key map (kbd "C-c b") 'rust-playground-switch-between-cargo-and-main)
     (define-key map (kbd "C-c k") 'rust-playground-rm)
     map))
-  
-;; (defvar rust-playground-mode-map
-;;   "Keymap for the Rust playground")
   
 (defun rust-playground-dir-name (&optional snippet-name)
   "Get the name of the directory where the snippet will exist, with SNIPPET-NAME as part of the directory name."
@@ -145,12 +133,14 @@ Otherwise message the user that they aren't in one."
     (set-buffer (create-file-buffer snippet-cargo-toml))
     (set-visited-file-name snippet-cargo-toml t)
     (insert rust-playground-cargo-toml-template)
-    (save-buffer)    
+    (save-buffer)
+    ;;now do src/main.rs
     (make-directory (concat snippet-dir "src"))
     (switch-to-buffer (create-file-buffer snippet-file-name))
     (set-visited-file-name snippet-file-name t)
     (rust-playground-insert-template-head "snippet of code" snippet-dir)
     (insert rust-playground-main-rs-template)
+    ;; back up to a good place to edit from
     (backward-char 27)
     (rust-mode)
     (rust-playground-mode)))
