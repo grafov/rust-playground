@@ -36,6 +36,7 @@
 ;;; Code:
 
 (require 'rust-mode)
+(require 'toml-mode)
 (require 'compile)
 (require 'time-stamp)
 
@@ -77,9 +78,6 @@ authors = [\"Rust Example <rust-snippet@example.com>\"]
 }"
   "When creating a new playground, this will be used as the body of the main.rs file")
 
-;; (defvar-local rust-playground-current-snippet-file "snippet.rs"
-;;   "The current snippet file.")
-
 (define-minor-mode rust-playground-mode
   "A place for playing with Rust code and export it in short snippets."
   :init-value nil
@@ -109,7 +107,7 @@ authors = [\"Rust Example <rust-snippet@example.com>\"]
 (defmacro in-rust-playground (&rest forms)
   "Execute FORMS if current buffer is part of a rust playground.
 Otherwise message the user that they aren't in one."
-  `(unless (rust-playground-get-snippet-basedir)
+  `(if (not (rust-playground-get-snippet-basedir))
        (message "You aren't in a Rust playground.")
      ,@forms))
 
@@ -132,6 +130,8 @@ Otherwise message the user that they aren't in one."
     (make-directory snippet-dir)
     (set-buffer (create-file-buffer snippet-cargo-toml))
     (set-visited-file-name snippet-cargo-toml t)
+    (rust-playground-mode)
+    (rust-playground-insert-template-head "snippet of code" snippet-dir)
     (insert rust-playground-cargo-toml-template)
     (save-buffer)
     ;;now do src/main.rs
@@ -162,20 +162,21 @@ Otherwise message the user that they aren't in one."
                           "main.rs")))))))
 
 (defun rust-playground-insert-template-head (description basedir)
-  (insert
-"// -*- mode:rust;mode:rust-playground -*-
-// " description " @ " (time-stamp-string "%:y-%02m-%02d %02H:%02M:%02S")
+  "Inserts a template about the snippet into the file."
+  (let ((starting-point (point)))
+    (insert (format
+             "%s @ %s
+
+=== Rust Playground ===
+This snippet is in: %s
+
+Execute the snippet: C-c C-c
+Delete the snippet completely: C-c k
+Toggle between main.rs and Cargo.toml: C-c b
+
 "
-
-// === Rust Playground ===
-// This snippet is in: " basedir
-"
-
-// Execute the snippet: C-c C-c
-// Delete the snippet completely: C-c k
-// Toggle between main.rs and Cargo.toml: C-c b
-
-"))
+             description (time-stamp-string "%:y-%02m-%02d %02H:%02M:%02S") basedir))
+    (comment-region starting-point (point))))
 
 ;;;###autoload
 (defun rust-playground-rm ()
@@ -227,9 +228,9 @@ Otherwise message the user that they aren't in one."
 Start from PATH or the path of the current buffer's file, or NIL of this is not a snippet."
   (unless path
       (setq path (buffer-file-name)))
-  (unless path
+  (if (not path)
       nil
-    (unless (string= path "/")
+    (if (not (string= path "/"))
         (let ((base "/home/jason/.emacs.d/rust-playground")
               (path-parent (file-name-directory (directory-file-name path))))
           (if (string= (file-name-as-directory base)
