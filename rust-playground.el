@@ -130,7 +130,7 @@ Otherwise message the user that they aren't in one."
   (interactive)
   (in-rust-playground
    (save-buffer t)
-   (compile "cargo run")))
+   (compile rust-playground-run-command)))
 
 ;;;###autoload
 (defun rust-playground ()
