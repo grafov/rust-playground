@@ -1,4 +1,4 @@
- ;;; rust-playground.el --- Local Rust playground for short code snippets.
+;;; rust-playground.el --- Local Rust playground for short code snippets.
 
 ;; Copyright (C) 2016-2017  Alexander I.Grafov (axel)
 
@@ -24,19 +24,17 @@
 ;;; Commentary:
 
 ;; Local playground for the Rust programs similar to play.rust-lang.org.
-;; `M-x rust-playground` and type you rust code then make&run it with `C-Return`.
+;; `M-x rust-playground` and type you rust code then make&run it with `C-c C-c`.
+;; Toggle between Cargo.toml and main.rs with `C-c b`
+;; Delete the current playground and close all buffers with `C-c k`
 
 ;; Playground works in conjunction with `rust-mode` and requires
 ;; preconfigured environment for Rust language.
 
 ;; It is port of github.com/grafov/go-playground for Go language.
 
-;; You may push code to play.rust-lang.org with rust-mode' function `rust-playpen-buffer`.
-
 ;;; Code:
 
-(require 'rust-mode)
-(require 'toml-mode)
 (require 'compile)
 (require 'time-stamp)
 
@@ -83,11 +81,11 @@ authors = [\"Rust Example <rust-snippet@example.com>\"]
   :init-value nil
   :lighter "Play(Rust)"
   :keymap (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "C-c C-c") 'rust-playground-exec)
-    (define-key map (kbd "C-c b") 'rust-playground-switch-between-cargo-and-main)
-    (define-key map (kbd "C-c k") 'rust-playground-rm)
-    map))
-  
+            (define-key map (kbd "C-c C-c") 'rust-playground-exec)
+            (define-key map (kbd "C-c b") 'rust-playground-switch-between-cargo-and-main)
+            (define-key map (kbd "C-c k") 'rust-playground-rm)
+            map))
+
 (defun rust-playground-dir-name (&optional snippet-name)
   "Get the name of the directory where the snippet will exist, with SNIPPET-NAME as part of the directory name."
   (file-name-as-directory (concat (file-name-as-directory rust-playground-basedir)
@@ -100,6 +98,22 @@ authors = [\"Rust Example <rust-snippet@example.com>\"]
 (defun rust-playground-toml-file-name (basedir)
   "Get the cargo.toml filename from BASEDIR."
   (concat basedir "Cargo.toml"))
+
+(defun rust-playground-get-snippet-basedir (&optional path)
+  "Get the path of the dir containing this snippet.
+Start from PATH or the path of the current buffer's file, or NIL if this is not a snippet."
+  (unless path
+    (setq path (buffer-file-name)))
+  (if (not path)
+      nil
+    (if (not (string= path "/"))
+        (let ((base "/home/jason/.emacs.d/rust-playground")
+              (path-parent (file-name-directory (directory-file-name path))))
+          (if (string= (file-name-as-directory base)
+                       (file-name-as-directory path-parent))
+              path
+            (rust-playground-get-snippet-basedir path-parent)))
+      nil)))
 
 ;; I think the proper way to check for this is to test if the minor mode is active
 ;; TODO base this check off the minor mode, once that mode gets set on all files
@@ -115,8 +129,8 @@ Otherwise message the user that they aren't in one."
   "Save the buffer then run Rust compiler for executing the code."
   (interactive)
   (in-rust-playground
-    (save-buffer t)
-    (compile "cargo run")))
+   (save-buffer t)
+   (compile "cargo run")))
 
 ;;;###autoload
 (defun rust-playground ()
@@ -142,7 +156,7 @@ Otherwise message the user that they aren't in one."
     (insert rust-playground-main-rs-template)
     ;; back up to a good place to edit from
     (backward-char 27)
-    (rust-mode)
+    ;; (rust-mode)
     (rust-playground-mode)))
 
 (defun rust-playground-switch-between-cargo-and-main ()
@@ -183,8 +197,9 @@ Toggle between main.rs and Cargo.toml: C-c b
    (let* ((basedir (rust-playground-get-snippet-basedir))
           (srcdir (concat basedir (file-name-as-directory "src"))))
      ;; now get the fullpath of cargo.toml, and the fullpath of every file under src/
-     (remove 'nil (seq-map 'find-buffer-visiting (cons (concat basedir "Cargo.toml")
-                                                       (directory-files srcdir t ".*\.rs")))))))
+     (remove 'nil (seq-map 'find-buffer-visiting
+                           (cons (concat basedir "Cargo.toml")
+                                 (directory-files srcdir t ".*\.rs")))))))
 
 ;;;###autoload
 (defun rust-playground-rm ()
@@ -196,55 +211,10 @@ Toggle between main.rs and Cargo.toml: C-c b
          (when (or (not rust-playground-confirm-deletion)
                    (y-or-n-p (format "Do you want delete whole snippet dir %s? "
                                      playground-basedir)))
-           (mapcar (lambda (buf)
-                     (kill-buffer buf))
-                   (rust-playground-get-all-buffers))
+           (dolist (buf (rust-playground-get-all-buffers))
+             (kill-buffer buf))
            (delete-directory playground-basedir t t))
        (message "Won't delete this! Because %s is not under the path %s. Remove the snippet manually!" (buffer-file-name) rust-playground-basedir)))))
-
-;; ;;;###autoload
-;; (defun rust-playground-download (url)
-;;   "Download a paste from the play.golang.org and insert it in a new local playground buffer.
-;; Tries to look for a URL at point."
-;;   (interactive (list (read-from-minibuffer "Playground URL: " (ffap-url-p (ffap-string-at-point 'url)))))
-;;   (with-current-buffer
-;;       (let ((url-request-method "GET") url-request-data url-request-extra-headers)
-;;         (url-retrieve-synchronously (concat url ".go")))
-;;     (let* ((snippet-file-name (rust-playground-snippet-file-name)) (buffer (create-file-buffer snippet-file-name)))
-;;       (goto-char (point-min))
-;;       (re-search-forward "\n\n")
-;;       (copy-to-buffer buffer (point) (point-max))
-;;       (kill-buffer)
-;;       (with-current-buffer buffer
-;;              (goto-char (point-min))
-;;              (rust-playground-insert-template-head (concat url " imported"))
-;;              (rust-mode)
-;;              (rust-playground-mode)
-;;              (set-visited-file-name snippet-file-name t)
-;;         (switch-to-buffer buffer)))))
-
-;; (defun rust-playground-upload ()
-;;   "Upload the current buffer to play.rust-lang.org and return the short URL of the playground."
-;;   (interactive)
-;;   (goto-char (point-min))
-;;   (forward-line)
-;;   (insert (rust-playpen-buffer)))
-
-(defun rust-playground-get-snippet-basedir (&optional path)
-  "Get the path of the dir containing this snippet.
-Start from PATH or the path of the current buffer's file, or NIL of this is not a snippet."
-  (unless path
-      (setq path (buffer-file-name)))
-  (if (not path)
-      nil
-    (if (not (string= path "/"))
-        (let ((base "/home/jason/.emacs.d/rust-playground")
-              (path-parent (file-name-directory (directory-file-name path))))
-          (if (string= (file-name-as-directory base)
-                       (file-name-as-directory path-parent))
-              path
-            (rust-playground-get-snippet-basedir path-parent)))
-      nil)))
 
 (provide 'rust-playground)
 ;;; rust-playground.el ends here

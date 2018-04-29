@@ -1,5 +1,5 @@
-<!--*- mode:markdown;mode:orgtbl;fill-column:99 -*-->
-<!-- # rust-playground [![MELPA Stable](https://stable.melpa.org/packages/rust-playground-badge.svg)](https://stable.melpa.org/#/rust-playground) [![MELPA](https://melpa.org/packages/rust-playground-badge.svg)](https://melpa.org/#/rust-playground) -->
+*- mode:markdown;mode:orgtbl;fill-column:99 -*
+# rust-playground [![MELPA Stable](https://stable.melpa.org/packages/rust-playground-badge.svg)](https://stable.melpa.org/#/rust-playground) [![MELPA](https://melpa.org/packages/rust-playground-badge.svg)](https://melpa.org/#/rust-playground)
 
 *It works. But development still in progress!*
 
