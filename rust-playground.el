@@ -156,7 +156,6 @@ Otherwise message the user that they aren't in one."
     (insert rust-playground-main-rs-template)
     ;; back up to a good place to edit from
     (backward-char 27)
-    ;; (rust-mode)
     (rust-playground-mode)))
 
 (defun rust-playground-switch-between-cargo-and-main ()
@@ -169,11 +168,9 @@ Otherwise message the user that they aren't in one."
      (cond
       ;; how to switch to existing or create new, given filename?
       ((string= "main.rs" (file-name-nondirectory buffer-file-name))
-       (find-file (concat basedir "Cargo.toml")))
+       (find-file (rust-playground-toml-file-name basedir)))
       (t
-       (find-file (concat basedir
-                          (file-name-as-directory "src")
-                          "main.rs")))))))
+       (find-file (rust-playground-snippet-main-file-name basedir)))))))
 
 (defun rust-playground-insert-template-head (description basedir)
   "Inserts a template about the snippet into the file."
