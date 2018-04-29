@@ -174,9 +174,17 @@ Execute the snippet: C-c C-c
 Delete the snippet completely: C-c k
 Toggle between main.rs and Cargo.toml: C-c b
 
-"
-             description (time-stamp-string "%:y-%02m-%02d %02H:%02M:%02S") basedir))
+" description (time-stamp-string "%:y-%02m-%02d %02H:%02M:%02S") basedir))
     (comment-region starting-point (point))))
+
+(defun rust-playground-get-all-buffers ()
+  "Get all the full file names that are part of the snippet."
+  (in-rust-playground
+   (let* ((basedir (rust-playground-get-snippet-basedir))
+          (srcdir (concat basedir (file-name-as-directory "src"))))
+     ;; now get the fullpath of cargo.toml, and the fullpath of every file under src/
+     (remove 'nil (seq-map 'find-buffer-visiting (cons (concat basedir "Cargo.toml")
+                                                       (directory-files srcdir t ".*\.rs")))))))
 
 ;;;###autoload
 (defun rust-playground-rm ()
@@ -185,15 +193,14 @@ Toggle between main.rs and Cargo.toml: C-c b
   (in-rust-playground
    (let ((playground-basedir (rust-playground-get-snippet-basedir)))
      (if playground-basedir
-         (if (or (not rust-playground-confirm-deletion)
-                 (y-or-n-p (format "Do you want delete whole snippet dir %s? "
-                                   playground-basedir)))
-             (progn
-               (save-buffer)
-               (delete-directory playground-basedir t t)
-               (kill-buffer)))
-       (message "Won't delete this! Because %s is not under the path %s. Remove the snippet manually!"
-                (buffer-file-name) rust-playground-basedir)))))
+         (when (or (not rust-playground-confirm-deletion)
+                   (y-or-n-p (format "Do you want delete whole snippet dir %s? "
+                                     playground-basedir)))
+           (mapcar (lambda (buf)
+                     (kill-buffer buf))
+                   (rust-playground-get-all-buffers))
+           (delete-directory playground-basedir t t))
+       (message "Won't delete this! Because %s is not under the path %s. Remove the snippet manually!" (buffer-file-name) rust-playground-basedir)))))
 
 ;; ;;;###autoload
 ;; (defun rust-playground-download (url)
