@@ -178,7 +178,7 @@ Toggle between main.rs and Cargo.toml: C-c b
     (comment-region starting-point (point))))
 
 (defun rust-playground-get-all-buffers ()
-  "Get all the full file names that are part of the snippet."
+  "Get all the buffers visiting Cargo.toml or any *.rs file under src/."
   (in-rust-playground
    (let* ((basedir (rust-playground-get-snippet-basedir))
           (srcdir (concat basedir (file-name-as-directory "src"))))
