@@ -107,7 +107,7 @@ Start from PATH or the path of the current buffer's file, or NIL if this is not 
   (if (not path)
       nil
     (if (not (string= path "/"))
-        (let ((base "/home/jason/.emacs.d/rust-playground")
+        (let ((base (expand-file-name rust-playground-basedir))
               (path-parent (file-name-directory (directory-file-name path))))
           (if (string= (file-name-as-directory base)
                        (file-name-as-directory path-parent))
