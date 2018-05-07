@@ -1,12 +1,8 @@
 <!-- *- mode:markdown;mode:orgtbl;fill-column:99 -* -->
 # rust-playground [![MELPA Stable](https://stable.melpa.org/packages/rust-playground-badge.svg)](https://stable.melpa.org/#/rust-playground) [![MELPA](https://melpa.org/packages/rust-playground-badge.svg)](https://melpa.org/#/rust-playground)
 
-*It works. But development still in progress!*
-
-GNU/Emacs mode that setup local playground for code snippets in Rust
-language.  This is a port of
-[go-playground](https://github.com/grafov/go-playground) adapted for
-Rust environment.
+GNU/Emacs mode that setup local playground for code snippets in Rust language.  This is a port of
+[go-playground](https://github.com/grafov/go-playground) adapted for Rust environment.
 
 ## Install
 
@@ -54,3 +50,9 @@ Example screen after creation of a new snippet:
 | `rust-playground-upload` | [WIP] Upload the buffer to play.golang.org and return the short URL. |
 | `rust-playground-rm` | Remove the snippet with its directory with all files. |
 <!--- END RECEIVE ORGTBL keys -->
+
+## Project status
+
+The plugin is usable. I've stopped learning Rust yet so this Emacs plugin not very interesting for
+me. But I'll continue to maintain it and backport features from `go-playground`. Patches are
+welcomed!
