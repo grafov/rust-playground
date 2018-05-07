@@ -2,9 +2,9 @@
 
 ;; Copyright (C) 2016-2017  Alexander I.Grafov (axel)
 
-;; Author: Alexander I.Grafov <grafov@gmail.com>
+;; Author: Alexander I.Grafov <grafov@gmail.com> + all the contributors (see git log)
 ;; URL: https://github.com/grafov/rust-playground
-;; Version: 0.1
+;; Version: 0.2.1
 ;; Keywords: tools, rust
 ;; Package-Requires: ((emacs "24.3") (rust-mode "0.3.0"))
 
