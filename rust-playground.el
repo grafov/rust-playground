@@ -6,7 +6,7 @@
 ;; URL: https://github.com/grafov/rust-playground
 ;; Version: 0.2.1
 ;; Keywords: tools, rust
-;; Package-Requires: ((emacs "24.3") (rust-mode "0.3.0"))
+;; Package-Requires: ((emacs "24.3"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -28,8 +28,7 @@
 ;; Toggle between Cargo.toml and main.rs with `C-c b`
 ;; Delete the current playground and close all buffers with `C-c k`
 
-;; Playground works in conjunction with `rust-mode` and requires
-;; preconfigured environment for Rust language.
+;; Playground requires preconfigured environment for Rust language.
 
 ;; It is port of github.com/grafov/go-playground for Go language.
 
@@ -39,8 +38,7 @@
 (require 'time-stamp)
 
 (defgroup rust-playground nil
-  "Options specific to Rust Playground."
-  :group 'rust-mode)
+  "Options specific to Rust Playground.")
 
 ;; I think it should be defined in rust-mode.
 (defcustom rust-playground-run-command "cargo run"
