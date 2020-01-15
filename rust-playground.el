@@ -63,6 +63,7 @@ By default confirmation required."
 name = \"foo\"
 version = \"0.1.0\"
 authors = [\"Rust Example <rust-snippet@example.com>\"]
+edition = \"2018\"
 
 [dependencies]"
   "When creating a new playground, this will be used as the Cargo.toml file")
