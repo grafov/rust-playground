@@ -153,6 +153,7 @@ Otherwise message the user that they aren't in one."
     (set-visited-file-name snippet-file-name t)
     (rust-playground-insert-template-head "snippet of code" snippet-dir)
     (insert rust-playground-main-rs-template)
+    (save-buffer)
     ;; back up to a good place to edit from
     (backward-char 27)
     (rust-playground-mode)))
