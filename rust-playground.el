@@ -59,13 +59,14 @@ By default confirmation required."
   :group 'rust-playground)
 
 (defcustom rust-playground-cargo-toml-template
-  "[package]
+  (format "[package]
 name = \"foo\"
 version = \"0.1.0\"
-authors = [\"Rust Example <rust-snippet@example.com>\"]
-edition = \"2018\"
+authors = [\"%s <%s>\"]
+edition = \"%s\"
 
 [dependencies]"
+          user-full-name user-mail-address (format-time-string "%Y"))
   "When creating a new playground, this will be used as the Cargo.toml file")
 
 (defcustom rust-playground-main-rs-template
