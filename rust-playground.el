@@ -129,7 +129,8 @@ Otherwise message the user that they aren't in one."
   (interactive)
   (in-rust-playground
    (save-buffer t)
-   (compile rust-playground-run-command)))
+   (let ((default-directory (rust-playground-get-snippet-basedir)))
+     (compile rust-playground-run-command))))
 
 ;;;###autoload
 (defun rust-playground ()
